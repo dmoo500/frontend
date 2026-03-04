@@ -185,11 +185,11 @@ class HaAutomationPicker extends SubscribeMixin(LitElement) {
 
   @consume({ context: labelsContext, subscribe: true })
   @state()
-  _labels?: LabelRegistryEntry[];
+  _labels: LabelRegistryEntry[] = [];
 
   @state()
   @consume({ context: fullEntitiesContext, subscribe: true })
-  _entityReg?: EntityRegistryEntry[];
+  _entityReg: EntityRegistryEntry[] = [];
 
   @state() private _overflowAutomation?: AutomationItem;
 
@@ -832,12 +832,12 @@ class HaAutomationPicker extends SubscribeMixin(LitElement) {
         filteredEntityIds = filteredEntityIds.filter(
           (entityId) =>
             filter.value![0] ===
-            (this._entityReg || []).find((reg) => reg.entity_id === entityId)
+            this._entityReg.find((reg) => reg.entity_id === entityId)
               ?.categories.automation
         );
       } else if (isFilterUsed(key, filter, "ha-filter-labels")) {
         filteredEntityIds = filteredEntityIds.filter((entityId) =>
-          (this._entityReg || [])
+          this._entityReg
             .find((reg) => reg.entity_id === entityId)
             ?.labels.some((lbl) => (filter.value as string[]).includes(lbl))
         );
@@ -945,7 +945,7 @@ class HaAutomationPicker extends SubscribeMixin(LitElement) {
   };
 
   private _editCategory = (automation: AutomationItem) => {
-    const entityReg = (this._entityReg || []).find(
+    const entityReg = this._entityReg.find(
       (reg) => reg.entity_id === automation.entity_id
     );
     if (!entityReg) {
