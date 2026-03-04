@@ -1,6 +1,5 @@
-import { ContextProvider } from "@lit/context";
 import { mdiContentSave } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { HassEntity } from "home-assistant-js-websocket";
 import { load } from "js-yaml";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
@@ -47,13 +46,7 @@ import {
   isTrigger,
   normalizeAutomationConfig,
 } from "../../../data/automation";
-import {
-  subscribeAndProcessConfigEntries,
-  type ConfigEntry,
-} from "../../../data/config_entries";
-import { configEntriesContext } from "../../../data/context";
 import { getActionType, type Action } from "../../../data/script";
-import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import type { HomeAssistant, ValueChangedEvent } from "../../../types";
 import { showToast } from "../../../util/toast";
 import "./action/ha-automation-action";
@@ -86,7 +79,7 @@ const automationConfigStruct = union([
 export const SIDEBAR_DEFAULT_WIDTH = 500;
 
 @customElement("manual-automation-editor")
-export class HaManualAutomationEditor extends SubscribeMixin(LitElement) {
+export class HaManualAutomationEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
@@ -123,28 +116,11 @@ export class HaManualAutomationEditor extends SubscribeMixin(LitElement) {
     HaAutomationAction | HaAutomationCondition
   >;
 
-  private _configEntries = new ContextProvider(this, {
-    context: configEntriesContext,
-    initialValue: [],
-  });
-
   private _prevSidebarWidthPx?: number;
 
   public connectedCallback() {
     super.connectedCallback();
     window.addEventListener("paste", this._handlePaste);
-  }
-
-  public hassSubscribe(): Promise<UnsubscribeFunc>[] {
-    return [
-      subscribeAndProcessConfigEntries(
-        this.hass,
-        (message: ConfigEntry[]) => {
-          this._configEntries.setValue(message);
-        },
-        undefined
-      ),
-    ];
   }
 
   public disconnectedCallback() {
