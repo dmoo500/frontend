@@ -50,6 +50,8 @@ import type {
   ExtEntityRegistryEntry,
 } from "../../data/entity/entity_registry";
 import { getExtendedEntityRegistryEntry } from "../../data/entity/entity_registry";
+import type { CoverEntity } from "../../data/cover";
+import { coverSupportsFavoritePositions } from "../../data/cover";
 import { lightSupportsFavoriteColors } from "../../data/light";
 import type { ItemType } from "../../data/search";
 import { SearchableDomains } from "../../data/search";
@@ -574,8 +576,12 @@ export class MoreInfoDialog extends ScrollableFadeMixin(LitElement) {
                         : nothing}
                       ${this._entry &&
                       stateObj &&
-                      domain === "light" &&
-                      lightSupportsFavoriteColors(stateObj)
+                      ((domain === "light" &&
+                        lightSupportsFavoriteColors(stateObj)) ||
+                        (domain === "cover" &&
+                          coverSupportsFavoritePositions(
+                            stateObj as CoverEntity
+                          )))
                         ? html`
                             <ha-dropdown-item value="toggle_edit">
                               <ha-svg-icon
