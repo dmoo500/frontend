@@ -329,7 +329,9 @@ export class MoreInfoDialog extends ScrollableFadeMixin(LitElement) {
   }
 
   private _toggleInfoEditMode() {
-    this._infoEditMode = !this._infoEditMode;
+    withViewTransition(() => {
+      this._infoEditMode = !this._infoEditMode;
+    });
   }
 
   private _toggleDetailsYamlMode() {
@@ -341,7 +343,9 @@ export class MoreInfoDialog extends ScrollableFadeMixin(LitElement) {
   }
 
   private _handleToggleInfoEditModeEvent(ev) {
-    this._infoEditMode = ev.detail;
+    withViewTransition(() => {
+      this._infoEditMode = ev.detail;
+    });
   }
 
   private _goToRelated(): void {
